@@ -7,6 +7,7 @@
 tipoDisciplina(jiu_jitsu, piso).
 tipoDisciplina(sambo, piso).
 tipoDisciplina(judo, piso).
+
 tipoDisciplina(muay_thai, parado).
 tipoDisciplina(boxeo, parado).
 tipoDisciplina(kickboxing, parado).
@@ -19,17 +20,22 @@ luchador(mati).
 luchador(facu).
 luchador(fede).
 
-%disciplina (Luchador, Disciplina(colorCinturon))
+%disciplina (Luchador, Disciplina)
 disciplina(mora, jiu_jitsu).
 disciplina(mora, muay_thai).
+
 disciplina(tomi, muay_thai).
 disciplina(tomi, boxeo).
+
 disciplina(vale, judo).
 disciplina(vale, kickboxing).
+
 disciplina(mati, sambo).
+
 disciplina(facu, muay_thai).
 disciplina(facu, boxeo).
 disciplina(facu, kickboxing).
+
 % fede no entrena ninguna disciplina por ende no esta en la base de conocimiento por universo cerrado
 
 %cinturon(Luchador, Disciplina, Color).
@@ -96,7 +102,6 @@ esNavajaSuiza(Luchador) :-
 	luchador(Luchador),
 	tieneCinturonNegro(Luchador),
 	mismoSometimiento(Luchador),
-	not(tecnica(Luchador, paradoGolpe(_,_),_)),
 	not(entrenaTipo(Luchador, parado)).
 
  tieneCinturonNegro(Luchador) :-
@@ -110,22 +115,9 @@ mismoSometimiento(Luchador) :-
     UnaPosicion \= OtraPosicion.
 
 % Punto 5 (Grupal)
-esContundente(tecnica(Luchador, piso(Nombre,Posicion), Efectividad)) :-
-    tecnica(Luchador, piso(Nombre,Posicion), Efectividad),
-    Efectividad =< 5.
-esContundente(tecnica(Luchador, paradoGolpe(Nombre,cabeza), Potencia)) :-
-	tecnica(Luchador, paradoGolpe(Nombre,cabeza), Potencia),
-	Potencia >= 8.
-esContundente(tecnica(Luchador, paradoLance(Nombre,Categoria), Puntos)) :-
-	tecnica(Luchador, paradoLance(Nombre,Categoria), Puntos),
-	Puntos >= 8.
-
-/* version Inversible
-% ===========================================================================================
-esContundente(tecnica(_, piso(_, _), Efectividad)) :- Efectividad =< 5.
-esContundente(tecnica(_, paradoGolpe(_, cabeza), Potencia)) :- Potencia >= 8.
-esContundente(tecnica(_, paradoLance(_, _), Puntos)) :- Puntos >= 8.
-% =========================================================================================== */
+esContundente(tecnica(_, piso(_, _), Efectividad)) :- tecnica(_, piso(_, _), Efectividad) ,Efectividad =< 5.
+esContundente(tecnica(_, paradoGolpe(_, cabeza), Potencia)) :- tecnica(_, paradoGolpe(_, cabeza), Potencia) , Potencia >= 8.
+esContundente(tecnica(_, paradoLance(_, _), Puntos)) :-  tecnica(_, paradoLance(_, _), Puntos), Puntos >= 8.
 
 % Punto 6 (Integrante 1)
 tieneUnPuntoFlojo(Luchador) :-
@@ -137,8 +129,8 @@ tieneUnPuntoFlojo(Luchador) :-
 esCertero(Luchador):-
 	tecnica(Luchador,_,_),
 	forall((tecnica(Luchador,TipoParado,Efectividad),
-    (esContundente(tecnica(Luchador,TipoParado, Efectividad)))), 
-    esDeParado(TipoParado)).
+	(esContundente(tecnica(Luchador,TipoParado, Efectividad)))), 
+	esDeParado(TipoParado)).
 
 esDeParado(paradoGolpe(_,_)).
 esDeParado(paradoLance(_,_)).
@@ -165,9 +157,8 @@ facilitarCombos([Tecnica|Resto], [Tecnica|Combo]) :- facilitarCombos(Resto, Comb
 % 2. esFielASuDisciplina
 test(vale_es_fiel_a_su_disciplina, nondet):- esFielASuDisciplina(vale).
 test(tomi_no_es_fiel_a_su_disciplina, fail):- esFielASuDisciplina(tomi).
-test(esFielASuDisciplina_es_inversible):-
-    findall(Luchador, esFielASuDisciplina(Luchador), Luchadores),
-    sort(Luchadores, [facu, fede, mati, mora, vale]).
+test(esFielASuDisciplina_es_inversible , set(Luchador == [facu, fede, mati, mora, vale])) :- esFielASuDisciplina(Luchador).
+
 % 3. esPicante
 test(facu_es_picante,nondet):- esPicante(facu).
 test(tomi_no_es_picante,fail):- esPicante(tomi).
@@ -179,43 +170,40 @@ test(esPicante_es_inversible, set(Luchador == [facu])):- esPicante(Luchador).
 test(esNavajaSuiza_es_inversible, set(Luchador == [mati])) :- esNavajaSuiza(Luchador).
 test(mati_es_navaja_suiza, nondet) :- esNavajaSuiza(mati).
 test(mora_no_es_navaja_suiza, fail) :- esNavajaSuiza(mora).
-% 5. esContundente
-test(triangulo_de_mora_es_contundente, nondet):- esContundente(tecnica(mora, piso(triangulo,guardia), 4)).
-test(armlock_de_mora_no_es_contundente, fail):- esContundente(tecnica(mora, piso(armlock,montada), 7)).
-test(patada_de_mora_es_contundente, nondet):- esContundente(tecnica(mora, paradoGolpe(patada,cabeza), 8)).
-test(rodillazo_de_mora_no_es_contundente, fail):- esContundente(tecnica(mora, paradoGolpe(rodillazo,cuerpo), 9)).
-test(gancho_de_tomi_no_es_contundente, fail):- esContundente(tecnica(tomi, paradoGolpe(gancho,cabeza), 6)).
-test(oSotoGari_de_vale_es_contundente, nondet):- esContundente(tecnica(vale, paradoLance(oSotoGari,proyeccion), 9)).
-test(ipponSeoiNage_de_vale_no_es_contundente, fail):- esContundente(tecnica(vale, paradoLance(ipponSeoiNage,tacle), 6)).
 
-test(esContundente_es_inversible_totalmente_libre):-
-    findall(Luchador-Nombre, esContundente(tecnica(Luchador, piso(Nombre,_), _)), Sometimientos),
-    sort(Sometimientos, Sometimientos2),
-    Sometimientos2 == [mati-botita, mati-llaveBrazo, mati-llaveRodilla, mati-mataleon, mati-triangulo, mora-triangulo, vale-estrangulacion].
+% 5. esContundente
+test(triangulo_de_mora_es_contundente, nondet):- esContundente(tecnica(_, piso(triangulo,guardia), 4)).
+test(armlock_de_mora_no_es_contundente, fail):- esContundente(tecnica(_, piso(armlock,montada), 7)).
+test(patada_de_mora_es_contundente, nondet):- esContundente(tecnica(_, paradoGolpe(patada,cabeza), 9)).
+test(rodillazo_de_mora_no_es_contundente, fail):- esContundente(tecnica(_, paradoGolpe(rodillazo,cuerpo), 9)).
+test(gancho_de_tomi_no_es_contundente, fail):- esContundente(tecnica(_, paradoGolpe(gancho,cabeza), 6)).
+test(oSotoGari_de_vale_es_contundente, nondet):- esContundente(tecnica(_, paradoLance(oSotoGari,proyeccion), 9)).
+test(ipponSeoiNage_de_vale_no_es_contundente, fail):- esContundente(tecnica(_, paradoLance(ipponSeoiNage,tacle), 6)).
 
 % 6. tieneUnPuntoFlojo
-test(mora_tiene_punto_flojo, nondet):- tieneUnPuntoFlojo(mora).
-test(tomi_tiene_punto_flojo, nondet):- tieneUnPuntoFlojo(tomi).
+test(mora_tiene_punto_flojo, nondet):-  tieneUnPuntoFlojo(mora).
+test(tomi_tiene_punto_flojo, nondet):-  tieneUnPuntoFlojo(tomi).
 test(vale_no_tiene_punto_flojo, fail):- tieneUnPuntoFlojo(vale).
 test(mati_no_tiene_punto_flojo, fail):- tieneUnPuntoFlojo(mati).
 test(facu_no_tiene_punto_flojo, fail):- tieneUnPuntoFlojo(facu).
-test(tieneUnPuntoFlojo_inversible):-
-    findall(Luchador, tieneUnPuntoFlojo(Luchador), Flojos), sort(Flojos, [mora, tomi]).
+test(tieneUnPuntoFlojo_inversible, set(Flojos == [mora, tomi])):- tieneUnPuntoFlojo(Flojos).
+
 % 7. esCertero
 test(tomi_es_certero,nondet):- esCertero(tomi).
 test(facu_es_certero,nondet):- esCertero(facu).
-test(mora_es_certero,fail):- esCertero(mora).
-test(vale_es_certero,fail):- esCertero(vale).
-test(mati_es_certero,fail):- esCertero(mati).
+test(mora_es_certero,fail):-   esCertero(mora).
+test(vale_es_certero,fail):-   esCertero(vale).
+test(mati_es_certero,fail):-   esCertero(mati).
 test(esCertero_es_inversible, set(Luchador == [tomi,facu])):- esCertero(Luchador).
+
 % 8. esTemible
 test(mati_es_temible, nondet):- esTemible(mati).
 test(facu_es_temible, nondet):- esTemible(facu).
 test(mora_no_es_temible, fail):- esTemible(mora).
 test(tomi_no_es_temible, fail):- esTemible(tomi).
 test(vale_no_es_temible, fail):- esTemible(vale).
-test(esTemible_es_inversible, set(Luchador == [facu, mati])):-
-	esTemible(Luchador).
+test(esTemible_es_inversible, set(Luchador == [facu, mati])):- esTemible(Luchador).
+
 % 9. comboPosible
 test(facu_4_combos_hasta_1):-
     findall(Combo, comboPosible(facu, 1, Combo), Combos), length(Combos, 4).
