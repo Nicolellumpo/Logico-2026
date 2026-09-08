@@ -226,6 +226,8 @@ equipoPosible2( [Persona | Otras], [Persona, Otra], Presupuesto , LoQueQueda):-
     member(Otra, Otras), 
     calculoCosto(Persona, Presupuesto, PresupuestoSobrante),
     calculoCosto(Otra, PresupuestoSobrante,LoQueQueda).
+% [Persona, Otra] esto hace q sea de al menos dos elementos 
+
 
 equipoPosible2([_|Personas], Equipo, Presupuesto, PresupuestoSobrante):- 
     calculoCosto(Persona, Presupuesto,PresupuestoSobrante),
@@ -246,4 +248,4 @@ reorganizar2(Equipo , Presupuesto, PresupuestoSobrante):-
     
 %esto hace que vuele en reorganizar esta parte:
 %     length(Equipo, Cant), Cant >= 2, ya que en equipoPosible2 ya me aseguro que el equipo tenga al menos 2 personas
-
+ 
