@@ -23,7 +23,8 @@ quienAtiende(Persona, Dia, HorarioPuntual):-
 % Punto 3: Forever alone (2 puntos)
 foreverAlone(Persona, Dia, HorarioPuntual):-
   quienAtiende(Persona, Dia, HorarioPuntual),
-  not((quienAtiende(OtraPersona, Dia, HorarioPuntual), Persona \= OtraPersona)).
+  not((quienAtiende(OtraPersona, Dia, HorarioPuntual), 
+  Persona \= OtraPersona)).
 
 % Punto 4: posibilidades de atención (3 puntos / 1 punto)
 posibilidadesAtencion(Dia, Personas):-

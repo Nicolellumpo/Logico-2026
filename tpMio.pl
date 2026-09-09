@@ -88,7 +88,8 @@ cocineroExperto(Cocinero):- cocineros(Cocinero),
 %-------------------------------------------PUNTO 4---------------------------------------------------
 %Integrante 2
 %Se satisface para una técnica cuando es dominada por todos los cocineros. El predicado debe ser inversible.
-tecnicaUniversal(Tecnica):- tecnicas(_, Tecnica), 
+tecnicaUniversal(Tecnica):- 
+	tecnicas(_, Tecnica), 
 	forall(cocineros(Cocinero), tecnicas(Cocinero,Tecnica)).
 
 %-------------------------------------------PUNTO 7---------------------------------------------------  
@@ -138,14 +139,18 @@ tipo(ramen(_), ramen).
 
 % Gana por orden
 platoGana(Plato , OtroPlato):- 
-	tipo(Plato, Tipo1), tipo(OtroPlato, Tipo2), Tipo1 \= Tipo2,
-	orden(Tipo1, NumeroDeOrden1), orden(Tipo2, NumeroDeOrden2),
+	tipo(Plato, Tipo1), 
+	tipo(OtroPlato, Tipo2), 
+	Tipo1 \= Tipo2,
+	orden(Tipo1, NumeroDeOrden1), 
+	orden(Tipo2, NumeroDeOrden2),
 	NumeroDeOrden1 > NumeroDeOrden2.
 
 %Mismo Tipo  y gana por complejidad
 platoGana(Plato , OtroPlato):- 
 	tipo(Plato, Tipo), tipo(OtroPlato, Tipo),
-	complejidad(Plato, Complejidad1), complejidad(OtroPlato , Complejidad2),
+	complejidad(Plato, Complejidad1), 
+	complejidad(OtroPlato , Complejidad2),
 	Complejidad1 > Complejidad2.
 
 %-------------------------------------------PUNTO 11--------------------------------------------------

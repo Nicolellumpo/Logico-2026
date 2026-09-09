@@ -63,7 +63,13 @@ quiere_ganar(joshua , 70).
 
 esta_en_problemas(Departamento):-
     trabaja_en(Departamento, Persona),
-    forall(trabaja_en(Departamento, Persona), not(esta_satifecha(Persona))).
+    forall(trabaja_en(Departamento, Persona), 
+    not(esta_satifecha(Persona))).
+
+esta_en_problemas2(Departamento):-
+    trabaja_en(Departamento, Persona),
+    not((trabaja_en(Departamento, Persona), 
+    not(esta_satifecha(Persona)))).
 
 esta_satifecha(Persona):-
     gana(Persona, Sueldo),

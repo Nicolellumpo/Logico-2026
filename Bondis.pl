@@ -43,7 +43,8 @@ cuantasLineasPasan(Calle, Zona, Cantidad):-
 
 calleMasTransitada(Calle, Zona):-
     cuantasLineasPasan(Calle, Zona, Cantidad),
-    forall((recorrido(_, Zona, OtraCalle), Calle \= OtraCalle), (cuantasLineasPasan(OtraCalle, Zona, CantidadMenor), Cantidad > CantidadMenor)).
+    forall((recorrido(_, Zona, OtraCalle), Calle \= OtraCalle), 
+    (cuantasLineasPasan(OtraCalle, Zona, CantidadMenor), Cantidad > CantidadMenor)).
 
 %% Punto 4
 
@@ -83,8 +84,10 @@ beneficiario(marta, personalCasaParticular(caba)).
 beneficiario(marta, personalCasaParticular(gba(sur))).
 
 beneficio(estudiantil, _, 50).
+
 beneficio(personalCasaParticular(Zona), Linea, 0):-
     recorrido(Linea, Zona, _).
+
 beneficio(jubilado, Linea, ValorConBeneficio):-
     valorNormal(Linea, ValorNormal),
     ValorConBeneficio is ValorNormal // 2.
@@ -97,7 +100,9 @@ costo(Persona, Linea, CostoFinal):-
     beneficiario(Persona, _),
     recorrido(Linea, _, _),
     posiblesBeneficios(Persona, Linea, CostoFinal),
-    forall((posiblesBeneficios(Persona, Linea, OtroValorBeneficiado), OtroValorBeneficiado \= CostoFinal), CostoFinal < OtroValorBeneficiado).
+    forall((posiblesBeneficios(Persona, Linea, OtroValorBeneficiado), 
+    OtroValorBeneficiado \= CostoFinal), 
+    CostoFinal < OtroValorBeneficiado).
 
 costo(Persona, Linea, ValorNormal):-
    persona(Persona),
